@@ -13,6 +13,13 @@ type Interface interface {
 	Pop() interface{}
 }
 
+// Init 初始化堆
+func Init(h Interface) {
+	for i := h.Len()/2 - 1; i >= 0; i-- {
+		down(h, i, h.Len())
+	}
+}
+
 // Push 添加
 func Push(h Interface, x interface{}) {
 	h.Push(x)
