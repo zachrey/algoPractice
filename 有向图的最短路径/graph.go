@@ -30,9 +30,9 @@ func (g *Graph) addEdge(s, t, w int) {
 
 // Edge 边
 type Edge struct {
-	sid int
-	tid int
-	w   int
+	sid int // 起点
+	tid int // 下个点
+	w   int // 权重
 }
 
 // Vertex 顶点
@@ -43,20 +43,22 @@ type Vertex struct {
 
 // Dijkstra 最短路径算法
 func (g *Graph) Dijkstra(s, t int) {
-	predecessor := make([]int, g.v)
-	vertes := make([]Vertex, g.v)
+	predecessor := make([]int, g.v) // 记录每一个点的上个路径
+	vertes := make([]*Vertex, g.v)  // 每个顶点的id和离s的距离
 	for i := range vertes {
-		vertes[i].dist = math.MaxInt16
-		vertes[i].id = i
+		vertes[i] = &Vertex{
+			dist: math.MaxInt16,
+			id:   i,
+		}
 	}
 
 	var queue PriorityQueue // 小顶堆
 
 	inQueue := make([]bool, g.v) // 记录每个顶点是否被遍历过
 
-	vertes[s].dist = 0           // 起点的距离设置为0
-	inQueue[s] = true            // 第一个点遍历了
-	heap.Push(&queue, vertes[s]) // 第一个点进入小顶堆
+	vertes[s].dist = 0            // 起点的距离设置为0
+	inQueue[s] = true             // 第一个点遍历了
+	heap.Push(&queue, *vertes[s]) // 第一个点进入小顶堆
 
 	for queue.Len() != 0 {
 		minVertex := heap.Pop(&queue).(Vertex)
@@ -70,9 +72,9 @@ func (g *Graph) Dijkstra(s, t int) {
 				nextVertex.dist = minVertex.dist + edge.w
 				predecessor[nextVertex.id] = minVertex.id
 				if inQueue[nextVertex.id] {
-					queueUpdate(&queue, nextVertex) // 如果下一个顶点是已经遍历过得,更新就行
+					queueUpdate(&queue, *nextVertex) // 如果下一个顶点是已经遍历过得,更新就行
 				} else {
-					heap.Push(&queue, nextVertex)
+					heap.Push(&queue, *nextVertex)
 					inQueue[nextVertex.id] = true
 				}
 			}
